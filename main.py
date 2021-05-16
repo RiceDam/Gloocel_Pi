@@ -35,6 +35,8 @@ def main():
         message = body.decode("utf-8")
         if ('open' in message):
             led.on()
+            sleep(5)
+            led.off()
             print("Success, Opened Door")
         elif ('close' in message):
             led.off()
