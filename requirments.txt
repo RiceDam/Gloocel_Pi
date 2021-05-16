@@ -1,0 +1,6 @@
+colorzero==2.0
+gpiozero==1.6.2
+pika==1.2.0
+pkg-resources==0.0.0
+python-dotenv==0.17.1
+RPi.GPIO==0.7.0
