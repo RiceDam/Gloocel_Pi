@@ -24,7 +24,7 @@ Queue1 = "TestQueue1"
 Queue2 = "TestQueue2"
 
 def main():
-    #store the following parameters within an environment variable otherwise gg no re
+
     credentials = pika.PlainCredentials(RMQ_USER, PASS)
     connection = pika.BlockingConnection(pika.ConnectionParameters(IP, PORT, '/', credentials))
     channel = connection.channel()
@@ -45,9 +45,10 @@ def main():
             led.off()
             print("other")
 
-    #Queue attribute needs to be changed when wanting to control a new door/queue
-    
-    #First Queue/Door, controls RED led
+    """
+    Queue attribute needs to be changed when wanting to control a new door/queue
+    First Queue/Door, controls RED led
+    """
     channel.basic_consume(queue=Queue1, on_message_callback=lambda ch, method, properties, body: callback(body, led_red), auto_ack=True)
 
     #Second Queue/Door, controls GREEN led
