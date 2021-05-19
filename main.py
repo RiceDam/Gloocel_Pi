@@ -2,9 +2,11 @@
 from gpiozero import LED
 from time import sleep 
 import pika
+import pika.exceptions
 import os 
 from retry import retry
 from dotenv import load_dotenv
+from pika.adapters.utils import connection_workflow
 
 #Environment Variables
 load_dotenv()
@@ -41,7 +43,7 @@ def callback(body, led):
   led.off()
   print("other")
 
-@retry(exceptions = pika.exceptions.AMQPConnectionError, tries = -1, delay=5, jitter=(1, 3), backoff=1.05)
+@retry(exceptions = [pika.exceptions.AMQPConnectionError, connection_workflow.AMQPConnectorException], tries = -1, delay=5, jitter=(1, 3), backoff=1.05)
 def main():
  connection = pika.BlockingConnection(pika.ConnectionParameters(IP, PORT, '/', CREDENTIALS))
  channel = connection.channel()
@@ -61,8 +63,14 @@ def main():
  except KeyboardInterrupt:
   channel.stop_consuming()
   connection.close()
- except pika.exceptions.ConnectionClosedByBroker:
-  print("Connection was closed")
+ except pika.exceptions.ConnectionClosedByBroker as e:
+  print(e)
+  print("Restarting connection . . .")
+  raise e
+ except connection_workflow.AMQPConnectorException as e:
+  print(e)
+  print("Restarting connection . . .")
+  raise e
  
 
 if __name__ == "__main__":
