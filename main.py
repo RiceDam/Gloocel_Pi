@@ -24,8 +24,8 @@ led_red = LED(18)
 led_green = LED(17)
 
 #Doors that are assigned to queues
-Queue1 = "TestQueue1"
-Queue2 = "TestQueue2"
+Queue1 = "Eddy's Door"
+Queue2 = "Herbert's Door"
 
 #Callback method that takes in an led 
 def callback(body, led):
@@ -43,7 +43,7 @@ def callback(body, led):
   led.off()
   print("other")
 
-@retry(exceptions = [pika.exceptions.AMQPConnectionError, connection_workflow.AMQPConnectorException], tries = -1, delay=5, jitter=(1, 3), backoff=1.05)
+@retry(exceptions = (pika.exceptions.AMQPConnectionError, connection_workflow.AMQPConnectorException), tries = -1, delay=5, jitter=(1, 3), backoff=1.05)
 def main():
  print("Connecting . . .")
  connection = pika.BlockingConnection(pika.ConnectionParameters(IP, PORT, '/', CREDENTIALS))
