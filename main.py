@@ -45,6 +45,7 @@ def callback(body, led):
 
 @retry(exceptions = [pika.exceptions.AMQPConnectionError, connection_workflow.AMQPConnectorException], tries = -1, delay=5, jitter=(1, 3), backoff=1.05)
 def main():
+ print("Connecting . . .")
  connection = pika.BlockingConnection(pika.ConnectionParameters(IP, PORT, '/', CREDENTIALS))
  channel = connection.channel()
 
@@ -53,8 +54,10 @@ def main():
  First Queue/Door, controls RED led
  """
  channel.basic_consume(queue=Queue1, on_message_callback=lambda ch, method, properties, body: callback(body, led_red), auto_ack=True)
-
- #Second Queue/Door, controls GREEN led
+ 
+ """
+ Second Queue/Door, controls GREEN led
+ """
  channel.basic_consume(queue=Queue2, on_message_callback=lambda ch, method, properties, body: callback(body, led_green), auto_ack=True)
  
  try:
