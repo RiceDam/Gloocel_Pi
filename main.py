@@ -13,6 +13,7 @@ RMQ_USER = os.getenv('RMQ_USER')
 PASS = os.getenv('PASS')
 IP = os.getenv('IP')
 PORT = os.getenv('PORT')
+CREDENTIALS = pika.PlainCredentials(RMQ_USER, PASS)
 
 #GPIO port 18 assigned to led 
 led_red = LED(18)
@@ -42,8 +43,7 @@ def callback(body, led):
 
 @retry(exceptions = pika.exceptions.AMQPConnectionError, tries = -1, delay=5, jitter=(1, 3), backoff=1.05)
 def main():
- credentials = pika.PlainCredentials(RMQ_USER, PASS)
- connection = pika.BlockingConnection(pika.ConnectionParameters(IP, PORT, '/', credentials))
+ connection = pika.BlockingConnection(pika.ConnectionParameters(IP, PORT, '/', CREDENTIALS))
  channel = connection.channel()
 
  """
@@ -55,7 +55,6 @@ def main():
  #Second Queue/Door, controls GREEN led
  channel.basic_consume(queue=Queue2, on_message_callback=lambda ch, method, properties, body: callback(body, led_green), auto_ack=True)
  
-
  try:
   print(' [*] Waiting for messages. To exit press CTRL+C')
   channel.start_consuming()
