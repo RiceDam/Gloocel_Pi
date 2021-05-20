@@ -31,6 +31,7 @@ Queue2 = "Herbert's Door"
 def callback(body, led):
  print(" [x] Received %r" % body)
  message = body.decode("utf-8")
+ message = message.lower()
  if ('open' in message):
   led.on()
   sleep(5)
